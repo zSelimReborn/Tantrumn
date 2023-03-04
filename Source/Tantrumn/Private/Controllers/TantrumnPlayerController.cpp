@@ -25,6 +25,8 @@ void ATantrumnPlayerController::SetupInputComponent()
 
 			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &ATantrumnPlayerController::RequestSprintAction);
 			EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &ATantrumnPlayerController::RequestCancelSprintAction);
+
+			EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &ATantrumnPlayerController::RequestCrouchAction);
 		}
 	}
 }
@@ -93,5 +95,30 @@ void ATantrumnPlayerController::RequestSprintAction()
 
 void ATantrumnPlayerController::RequestCancelSprintAction()
 {
-	GetCharacter()->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	if (GetCharacter() && GetCharacter()->GetCharacterMovement())
+	{
+		GetCharacter()->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
+	}
+}
+
+void ATantrumnPlayerController::RequestCrouchAction()
+{
+	if (!GetCharacter() || !GetCharacter()->GetCharacterMovement())
+	{
+		return;
+	}
+	
+	if (!GetCharacter()->GetCharacterMovement()->IsMovingOnGround())
+	{
+		return;
+	}
+	
+	if (!GetCharacter()->GetCharacterMovement()->IsCrouching())
+	{
+		GetCharacter()->Crouch();
+	}
+	else
+	{
+		GetCharacter()->UnCrouch();
+	}
 }

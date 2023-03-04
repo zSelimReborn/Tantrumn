@@ -31,6 +31,7 @@ protected:
 	void RequestLookAction(const FInputActionValue&);
 	void RequestSprintAction();
 	void RequestCancelSprintAction();
+	void RequestCrouchAction();
 	
 	// To Tune
 protected:
@@ -60,4 +61,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UInputAction> SprintAction;
 
+	UPROPERTY(EditDefaultsOnly, Category="Input")
+	TObjectPtr<UInputAction> CrouchAction;
 };
