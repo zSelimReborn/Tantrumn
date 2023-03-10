@@ -9,6 +9,7 @@
 
 class UInputAction;
 class UInputMappingContext;
+class ATantrumnBaseCharacter;
 
 /**
  * 
@@ -63,4 +64,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UInputAction> CrouchAction;
+
+	UPROPERTY(Transient)
+	TObjectPtr<ATantrumnBaseCharacter> TantrumnBaseCharacter;
 };

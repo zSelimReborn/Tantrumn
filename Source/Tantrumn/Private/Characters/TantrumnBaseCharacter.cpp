@@ -6,6 +6,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
 // Sets default values
@@ -34,6 +35,11 @@ void ATantrumnBaseCharacter::BeginPlay()
 			EnhancedInputComponent->AddMappingContext(MappingContext, 0);
 		}
 	}
+
+	if (GetCharacterMovement())
+	{
+		InitialWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	}
 }
 
 // Called every frame
@@ -48,5 +54,31 @@ void ATantrumnBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+float ATantrumnBaseCharacter::GetLookUpRate() const
+{
+	return BaseLookUpRate;
+}
+
+float ATantrumnBaseCharacter::GetLookRightRate() const
+{
+	return BaseLookRightRate;
+}
+
+void ATantrumnBaseCharacter::RequestSprintAction()
+{
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
+	}
+}
+
+void ATantrumnBaseCharacter::RequestWalkAction()
+{
+	if (GetCharacterMovement())
+	{
+		GetCharacterMovement()->MaxWalkSpeed = InitialWalkSpeed;
+	}
 }
 

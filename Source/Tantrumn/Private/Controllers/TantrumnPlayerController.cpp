@@ -4,6 +4,7 @@
 #include "Controllers/TantrumnPlayerController.h"
 
 #include "EnhancedInputComponent.h"
+#include "Characters/TantrumnBaseCharacter.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -39,6 +40,8 @@ void ATantrumnPlayerController::BeginPlay()
 	{
 		WalkSpeed = GetCharacter()->GetCharacterMovement()->MaxWalkSpeed;
 	}
+
+	TantrumnBaseCharacter = Cast<ATantrumnBaseCharacter>(GetCharacter());
 }
 
 void ATantrumnPlayerController::RequestJumpAction()
@@ -79,15 +82,23 @@ void ATantrumnPlayerController::RequestLookAction(const FInputActionValue& Value
 		const FVector2d LookVector = Value.Get<FVector2d>();
 		const float PitchAxisValue = LookVector.Y;
 		const float YawAxisValue = LookVector.X;
+
+		const float LookUpRate = (TantrumnBaseCharacter)? TantrumnBaseCharacter->GetLookUpRate() : BaseLookUpRate;
+		const float LookRightRate = (TantrumnBaseCharacter)? TantrumnBaseCharacter->GetLookRightRate() : BaseLookRightRate;
 		
-		GetCharacter()->AddControllerPitchInput(PitchAxisValue * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
-		GetCharacter()->AddControllerYawInput(YawAxisValue * BaseLookRightRate * GetWorld()->GetDeltaSeconds());
+		GetCharacter()->AddControllerPitchInput(PitchAxisValue * LookUpRate * GetWorld()->GetDeltaSeconds());
+		GetCharacter()->AddControllerYawInput(YawAxisValue * LookRightRate * GetWorld()->GetDeltaSeconds());
 	}
 }
 
 void ATantrumnPlayerController::RequestSprintAction()
 {
-	if (GetCharacter() && GetCharacter()->GetCharacterMovement())
+	if (TantrumnBaseCharacter)
+	{
+		TantrumnBaseCharacter->RequestSprintAction();
+	}
+	
+	else if (GetCharacter() && GetCharacter()->GetCharacterMovement())
 	{
 		GetCharacter()->GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
 	}
@@ -95,7 +106,11 @@ void ATantrumnPlayerController::RequestSprintAction()
 
 void ATantrumnPlayerController::RequestCancelSprintAction()
 {
-	if (GetCharacter() && GetCharacter()->GetCharacterMovement())
+	if (TantrumnBaseCharacter)
+	{
+		TantrumnBaseCharacter->RequestWalkAction();
+	}
+	else if (GetCharacter() && GetCharacter()->GetCharacterMovement())
 	{
 		GetCharacter()->GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 	}

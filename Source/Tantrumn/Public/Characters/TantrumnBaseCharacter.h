@@ -30,6 +30,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+// Movement interface
+public:
+	float GetLookUpRate() const;
+	float GetLookRightRate() const;
+	
+	virtual void RequestSprintAction();
+	virtual void RequestWalkAction();
+	
 	//Components
 protected:
 	UPROPERTY(VisibleAnywhere, NoClear)
@@ -41,4 +49,16 @@ protected:
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
 	TObjectPtr<UInputMappingContext> MappingContext;
+
+	UPROPERTY(EditAnywhere, Category="Look", meta=(ClampMin="0", UIMin="0", ForceUnits="deg/s"))
+	float BaseLookUpRate = 90.f;
+
+	UPROPERTY(EditAnywhere, Category="Look", meta=(ClampMin="0", UIMin="0", ForceUnits="deg/s"))
+	float BaseLookRightRate = 90.f;
+
+	UPROPERTY(EditAnywhere, Category="Sprint", meta=(ClampMin="0", UIMin="0", ForceUnits="cm/s"))
+	float SprintSpeed = 900.f;
+
+	UPROPERTY(Transient, VisibleAnywhere, Category="Sprint")
+	float InitialWalkSpeed = 600.f;
 };
