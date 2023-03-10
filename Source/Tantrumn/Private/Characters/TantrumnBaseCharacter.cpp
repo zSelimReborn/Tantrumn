@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
 #include "Components/FallHandlerComponent.h"
+#include "Components/PlayerStatusComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -23,6 +24,7 @@ ATantrumnBaseCharacter::ATantrumnBaseCharacter()
 	FollowCamera->SetupAttachment(CameraBoom);
 
 	FallHandlerComponent = CreateDefaultSubobject<UFallHandlerComponent>(TEXT("Fall Handler Component"));
+	PlayerStatusComponent = CreateDefaultSubobject<UPlayerStatusComponent>(TEXT("Player Status Component"));
 }
 
 // Called when the game starts or when spawned
@@ -51,7 +53,6 @@ void ATantrumnBaseCharacter::BeginPlay()
 void ATantrumnBaseCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -63,21 +64,26 @@ void ATantrumnBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 void ATantrumnBaseCharacter::OnFallDamage(const float FallRatio)
 {
-	UE_LOG(LogTemp, Error, TEXT("Ouch! %.2f"), FallRatio);
+	PlayerStatusComponent->StartStun(FallRatio);
 }
 
 float ATantrumnBaseCharacter::GetLookUpRate() const
 {
-	return BaseLookUpRate;
+	return (!PlayerStatusComponent->IsStunned())? BaseLookUpRate : PlayerStatusComponent->GetLookUpRateOnStun();
 }
 
 float ATantrumnBaseCharacter::GetLookRightRate() const
 {
-	return BaseLookRightRate;
+	return (!PlayerStatusComponent->IsStunned())? BaseLookRightRate : PlayerStatusComponent->GetLookRightRateOnStun();
 }
 
 void ATantrumnBaseCharacter::RequestSprintAction()
 {
+	if (PlayerStatusComponent->IsStunned())
+	{
+		return;
+	}
+	
 	if (GetCharacterMovement())
 	{
 		GetCharacterMovement()->MaxWalkSpeed = SprintSpeed;
@@ -86,9 +92,13 @@ void ATantrumnBaseCharacter::RequestSprintAction()
 
 void ATantrumnBaseCharacter::RequestWalkAction()
 {
+	if (PlayerStatusComponent->IsStunned())
+	{
+		return;
+	}
+
 	if (GetCharacterMovement())
 	{
 		GetCharacterMovement()->MaxWalkSpeed = InitialWalkSpeed;
 	}
 }
-

@@ -10,6 +10,7 @@ class UInputMappingContext;
 class USpringArmComponent;
 class UCameraComponent;
 class UFallHandlerComponent;
+class UPlayerStatusComponent;
 
 UCLASS()
 class TANTRUMN_API ATantrumnBaseCharacter : public ACharacter
@@ -44,7 +45,7 @@ public:
 	virtual void RequestSprintAction();
 	virtual void RequestWalkAction();
 	
-	//Components
+//Components
 protected:
 	UPROPERTY(VisibleAnywhere, NoClear)
 	TObjectPtr<USpringArmComponent> CameraBoom;
@@ -54,6 +55,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, NoClear)
 	TObjectPtr<UFallHandlerComponent> FallHandlerComponent;
+
+	UPROPERTY(VisibleAnywhere, NoClear)
+	TObjectPtr<UPlayerStatusComponent> PlayerStatusComponent;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Input")
