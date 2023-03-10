@@ -9,6 +9,7 @@
 class UInputMappingContext;
 class USpringArmComponent;
 class UCameraComponent;
+class UFallHandlerComponent;
 
 UCLASS()
 class TANTRUMN_API ATantrumnBaseCharacter : public ACharacter
@@ -30,6 +31,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+// Event callbacks
+protected:
+	UFUNCTION()
+	void OnFallDamage(const float FallRatio);
+	
 // Movement interface
 public:
 	float GetLookUpRate() const;
@@ -45,6 +51,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, NoClear)
 	TObjectPtr<UCameraComponent> FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, NoClear)
+	TObjectPtr<UFallHandlerComponent> FallHandlerComponent;
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category="Input")

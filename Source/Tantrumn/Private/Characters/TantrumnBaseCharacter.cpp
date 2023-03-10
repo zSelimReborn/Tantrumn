@@ -6,6 +6,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
+#include "Components/FallHandlerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 
@@ -20,6 +21,8 @@ ATantrumnBaseCharacter::ATantrumnBaseCharacter()
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("Follow Camera"));
 	FollowCamera->SetupAttachment(CameraBoom);
+
+	FallHandlerComponent = CreateDefaultSubobject<UFallHandlerComponent>(TEXT("Fall Handler Component"));
 }
 
 // Called when the game starts or when spawned
@@ -40,6 +43,8 @@ void ATantrumnBaseCharacter::BeginPlay()
 	{
 		InitialWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	}
+
+	FallHandlerComponent->OnFallDamage().AddDynamic(this, &ATantrumnBaseCharacter::OnFallDamage);
 }
 
 // Called every frame
@@ -54,6 +59,11 @@ void ATantrumnBaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ATantrumnBaseCharacter::OnFallDamage(const float FallRatio)
+{
+	UE_LOG(LogTemp, Error, TEXT("Ouch! %.2f"), FallRatio);
 }
 
 float ATantrumnBaseCharacter::GetLookUpRate() const
